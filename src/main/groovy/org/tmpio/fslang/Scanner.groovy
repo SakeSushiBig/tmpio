@@ -26,9 +26,9 @@ class Scanner {
         Token token
         if([",", ";"].contains(value)) {
             return next()
-        } else if(["[","]"].contains(value)) {
+        } else if(value.matches(/(\[|\])/)) {
             token = Token.sqrBracket(ParenStates.fromString(value))
-        } else if(["(",")"].contains(value)) {
+        } else if(value.matches(/(\(|\))/)) {
             token = Token.paren(ParenStates.fromString(value))
         } else {
             for(; position < code.size(); position++) {
