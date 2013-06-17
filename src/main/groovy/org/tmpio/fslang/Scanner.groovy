@@ -28,6 +28,8 @@ class Scanner {
             return next()
         } else if(["[","]"].contains(value)) {
             token = Token.sqrBracket(ParenStates.fromString(value))
+        } else if(["(",")"].contains(value)) {
+            token = Token.paren(ParenStates.fromString(value))
         } else {
             for(; position < code.size(); position++) {
                 def n = code.substring(position, position + 1)

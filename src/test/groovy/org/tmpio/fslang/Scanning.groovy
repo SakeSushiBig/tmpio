@@ -10,7 +10,7 @@ import static org.tmpio.fslang.Token.*
 @RunWith(Sputnik)
 class Scanning extends Specification {
 
-    def "tokenize flat file trees"() {
+    def "tokenize file trees"() {
         setup:
         def scanner = new Scanner()
         when:
@@ -25,6 +25,12 @@ class Scanning extends Specification {
         "[file1,file2]"             | [sqrBracket(Open), name("file1"), name("file2"), sqrBracket(Closed) ]
         "[file1]folder1;folder2"    | [sqrBracket(Open), name("file1"), sqrBracket(Closed), name("folder1"), name("folder2") ]
         ""                          | []
+        "folder1(folder12;folder21)"| [name("folder1"), paren(Open), name("folder12"), name("folder21"), paren(Closed)]
+        "[file1]folder1(folder12)"  | [sqrBracket(Open), name("file1"), sqrBracket(Closed), name("folder1"),
+                                           paren(Open), name("folder12"), paren(Closed)]
+        "folder1([file1,file2]folder12(folder21))" | [name("folder1"), paren(Open),
+                sqrBracket(Open), name("file1"), name("file2"), sqrBracket(Closed),
+                name("folder12"), paren(Open), name("folder21"), paren(Closed), paren(Closed)]
     }
 
 }

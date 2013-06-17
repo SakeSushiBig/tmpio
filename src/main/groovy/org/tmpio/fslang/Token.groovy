@@ -11,6 +11,12 @@ class Token {
         return token
     }
 
+    static Token paren(ParenStates state) {
+        def token = new Token(type: TokenTypes.Parentheses, value: state)
+        token.attributes.put("state", state)
+        return token
+    }
+
     TokenTypes type
     String value
     def attributes = [:]
