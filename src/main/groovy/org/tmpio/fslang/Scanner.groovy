@@ -33,7 +33,7 @@ class Scanner {
         } else {
             for(; position < code.size(); position++) {
                 def n = code.substring(position, position + 1)
-                if(!n.charAt(0).letterOrDigit) {
+                if(!n.matches(/[a-zA-Z0-9-_\ \.]/)) {
                     break
                 }
                 value += n
@@ -42,6 +42,14 @@ class Scanner {
         }
         this.token << token
         return token
+    }
+
+    def skip(int t) {
+        t.times {
+            next()
+            token.pop()
+        }
+        return this
     }
 
 }
