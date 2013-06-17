@@ -6,13 +6,15 @@ class Token {
     }
 
     static Token sqrBracket(ParenStates state) {
-        def token = new Token(type: TokenTypes.SquareBracket, value: state)
-        token.attributes.put("state", state)
-        return token
+        return parentheses(state, TokenTypes.SquareBracket)
     }
 
     static Token paren(ParenStates state) {
-        def token = new Token(type: TokenTypes.Parentheses, value: state)
+        return parentheses(state, TokenTypes.Parentheses)
+    }
+
+    private static Token parentheses(ParenStates state, TokenTypes type) {
+        def token = new Token(type: type, value: state)
         token.attributes.put("state", state)
         return token
     }

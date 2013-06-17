@@ -8,7 +8,7 @@ class Scanner {
 
     def setSource(String c) {
         if(c == null)
-            throw new IllegalArgumentException("fslang.Scanner cannot accept null value for code", new NullPointerException())
+            throw new IllegalArgumentException("Cannot accept null value for code")
         this.code = c
         this.position = 0
         this.token = []
@@ -20,35 +20,35 @@ class Scanner {
     }
 
     def Token next() {
+        Token next = scan()
+        if(next != null) token << next
+        return next
+    }
+
+    private Token scan() {
         if(position == code.size())
             return null
         def value = code.substring(position++, position)
-        Token token
-        if([",", ";"].contains(value)) {
-            return next()
+        if(value.matches(/(\,|\;)/)) {
+            return scan()
         } else if(value.matches(/(\[|\])/)) {
-            token = Token.sqrBracket(ParenStates.fromString(value))
+            return Token.sqrBracket(ParenStates.fromString(value))
         } else if(value.matches(/(\(|\))/)) {
-            token = Token.paren(ParenStates.fromString(value))
+            return Token.paren(ParenStates.fromString(value))
         } else {
-            for(; position < code.size(); position++) {
-                def n = code.substring(position, position + 1)
-                if(!n.matches(/[a-zA-Z0-9-_\ \.]/)) {
-                    break
-                }
-                value += n
+            def expr = ~/[a-zA-Z0-9-_\ \.]/
+            def name = code.substring(position).takeWhile {
+                expr.matcher(it.toString()).matches()
             }
-            token = Token.name(value)
+            position += name.value.size()
+            return Token.name(value + name)
         }
-        this.token << token
-        return token
     }
 
     def skip(int t) {
-        t.times {
-            next()
-            token.pop()
-        }
+        if(t < 0)
+            throw new IllegalArgumentException("Cannot skip " + t + " tokens")
+        t.times { scan() }
         return this
     }
 
