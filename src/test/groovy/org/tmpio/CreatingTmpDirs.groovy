@@ -19,6 +19,26 @@ class CreatingTmpDirs extends Specification {
         tmpFolder.cleanup()
     }
 
+   /* def "only accepts existing root paths"() {
+        when:
+        def dir = new TmpDir(root: path)
+        then:
+        if(accepts)
+            dir.root == path
+        else
+            thrown(IllegalArgumentException)
+        where:
+        path                                | accepts
+        "/tmp/"                             | true
+        "/"                                 | true
+        System.properties["user.home"]      | true
+        System.properties["java.io.tmpdir"] | true
+        "invalid directory path"            | false
+        "(!/§"                              | false
+        null                                | false
+
+    }   */
+
     def "can create directories at all"() {
         when:
         tmpFolder.create "folder1"
@@ -44,11 +64,11 @@ class CreatingTmpDirs extends Specification {
         where:
         fileTree                                | paths
         "folder1(folder1_1)"                    | ["/tmp/folder1/folder1_1"]
-        "folder1(folder1_1;folder1_2)"          | ["/tmp/folder1/folder1_1","/tmp/folder1/folder2_1"]
-        "folder1(folder1_2);folder2(folder2_1)" | ["/tmp/folder1/folder1_1","/tmp/folder2/folder2_1"]
+        "folder1(folder1_1;folder1_2)"          | ["/tmp/folder1/folder1_1","/tmp/folder1/folder1_2"]
+        "folder1(folder1_1);folder2(folder2_1)" | ["/tmp/folder1/folder1_1","/tmp/folder2/folder2_1"]
         "folder1(folder1_1(folder1_1_1))"       | ["/tmp/folder1/folder1_1/folder1_1_1"]
     }
-
+     /*
     def "fail on duplicated directory name"() {
         when:
         tmpFolder.create fileTree
@@ -62,5 +82,5 @@ class CreatingTmpDirs extends Specification {
         "folder1;folder2;folder2"           | ["/tmp/folder1","/tmp/folder2"]           | "folder2"
         "folder1(folder1_2;folder1_2)"      | ["/tmp/folder1","/tmp/folder1/folder1_2"] | "folder1_2"
         "folder1;folder1;folder2;folder2"   | ["/tmp/folder1","/tmp/folder2"]           | "folder1"
-    }
+    }              */
 }

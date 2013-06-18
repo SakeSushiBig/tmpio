@@ -1,27 +1,19 @@
 package org.tmpio.fslang
 
 class Token {
-    static Token name(String value) {
+
+    static Token nameToken(String value) {
         new Token(type: TokenTypes.Name, value: value)
     }
 
-    static Token sqrBracket(ParenStates state) {
-        return parentheses(state, TokenTypes.SquareBracket)
-    }
-
-    static Token paren(ParenStates state) {
-        return parentheses(state, TokenTypes.Parentheses)
-    }
-
-    private static Token parentheses(ParenStates state, TokenTypes type) {
-        def token = new Token(type: type, value: state)
-        token.attributes.put("state", state)
-        return token
+    static Token token(TokenTypes type) {
+        new Token(type: type)
     }
 
     TokenTypes type
     String value
     def attributes = [:]
+    def codePosition
 
     @Override
     def String toString() {

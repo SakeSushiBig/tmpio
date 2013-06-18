@@ -1,6 +1,8 @@
 package org.tmpio.fslang
 
-class Scanner {
+import static org.tmpio.fslang.Token.*
+
+class FsScanner {
 
     private String code
     private List<Token> token
@@ -20,8 +22,12 @@ class Scanner {
     }
 
     def Token next() {
+        int pos = position
         Token next = scan()
-        if(next != null) token << next
+        if(next != null) {
+            next.codePosition = pos
+            token << next
+        }
         return next
     }
 
@@ -31,17 +37,15 @@ class Scanner {
         def value = code.substring(position++, position)
         if(value.matches(/(\,|\;)/)) {
             return scan()
-        } else if(value.matches(/(\[|\])/)) {
-            return Token.sqrBracket(ParenStates.fromString(value))
-        } else if(value.matches(/(\(|\))/)) {
-            return Token.paren(ParenStates.fromString(value))
-        } else {
+        } else if(value.matches(/(\[|\]|\(|\))/)) {
+            return token(TokenTypes.forParentheses(value))
+        }  else {
             def expr = ~/[a-zA-Z0-9-_\ \.]/
             def name = code.substring(position).takeWhile {
                 expr.matcher(it.toString()).matches()
             }
-            position += name.value.size()
-            return Token.name(value + name)
+            position += name.size()
+            return nameToken(value + name)
         }
     }
 
@@ -50,6 +54,10 @@ class Scanner {
             throw new IllegalArgumentException("Cannot skip " + t + " tokens")
         t.times { scan() }
         return this
+    }
+
+    def empty() {
+        position >= code.size()
     }
 
 }

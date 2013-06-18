@@ -4,16 +4,16 @@ import org.junit.runner.RunWith
 import org.spockframework.runtime.Sputnik
 import spock.lang.Specification
 
-import static org.tmpio.fslang.ParenStates.*
+import static org.tmpio.fslang.TokenTypes.*
 import static org.tmpio.fslang.Token.*
 
 @RunWith(Sputnik)
 class Scanning extends Specification {
 
-    Scanner scanner
+    FsScanner scanner
 
     def setup() {
-        scanner = new Scanner()
+        scanner = new FsScanner()
     }
 
     def "tokenize file trees"() {
@@ -23,18 +23,18 @@ class Scanning extends Specification {
         scanner.all() == tokens
         where:
         fileTree                    | tokens
-        "folder1"                   | [name("folder1")]
-        "folder1;folder2"           | [name("folder1"), name("folder2")]
-        "[file1]"                   | [sqrBracket(Open), name("file1"), sqrBracket(Closed) ]
-        "[file1,file2]"             | [sqrBracket(Open), name("file1"), name("file2"), sqrBracket(Closed) ]
-        "[file1]folder1;folder2"    | [sqrBracket(Open), name("file1"), sqrBracket(Closed), name("folder1"), name("folder2") ]
+        "folder1"                   | [nameToken("folder1")]
+        "folder1;folder2"           | [nameToken("folder1"), nameToken("folder2")]
+        "[file1]"                   | [token(OpenSqrBracket), nameToken("file1"), token(ClosedSqrBracket) ]
+        "[file1,file2]"             | [token(OpenSqrBracket), nameToken("file1"), nameToken("file2"), token(ClosedSqrBracket) ]
+        "[file1]folder1;folder2"    | [token(OpenSqrBracket), nameToken("file1"), token(ClosedSqrBracket), nameToken("folder1"), nameToken("folder2") ]
         ""                          | []
-        "folder1(folder12;folder21)"| [name("folder1"), paren(Open), name("folder12"), name("folder21"), paren(Closed)]
-        "[file1]folder1(folder12)"  | [sqrBracket(Open), name("file1"), sqrBracket(Closed), name("folder1"),
-                                           paren(Open), name("folder12"), paren(Closed)]
-        "folder1([file1,file2]folder12(folder21))" | [name("folder1"), paren(Open),
-                sqrBracket(Open), name("file1"), name("file2"), sqrBracket(Closed),
-                name("folder12"), paren(Open), name("folder21"), paren(Closed), paren(Closed)]
+        "folder1(folder12;folder21)"| [nameToken("folder1"), token(OpenParen), nameToken("folder12"), nameToken("folder21"), token(ClosedParen)]
+        "[file1]folder1(folder12)"  | [token(OpenSqrBracket), nameToken("file1"), token(ClosedSqrBracket), nameToken("folder1"),
+                                           token(OpenParen), nameToken("folder12"), token(ClosedParen)]
+        "folder1([file1,file2]folder12(folder21))" | [nameToken("folder1"), token(OpenParen),
+                token(OpenSqrBracket), nameToken("file1"), nameToken("file2"), token(ClosedSqrBracket),
+                nameToken("folder12"), token(OpenParen), nameToken("folder21"), token(ClosedParen), token(ClosedParen)]
     }
 
     def "matching file name variations"() {
