@@ -2,6 +2,7 @@ package org.tmpio
 
 import org.junit.runner.RunWith
 import org.spockframework.runtime.Sputnik
+import org.tmpio.fslang.ParserEx
 import spock.lang.Specification
 
 import java.nio.file.Files
@@ -19,25 +20,23 @@ class CreatingTmpDirs extends Specification {
         tmpFolder.cleanup()
     }
 
-   /* def "only accepts existing root paths"() {
+    def "only accepts existing root paths"() {
         when:
         def dir = new TmpDir(root: path)
         then:
-        if(accepts)
-            dir.root == path
-        else
-            thrown(IllegalArgumentException)
+        dir.root == path
         where:
-        path                                | accepts
-        "/tmp/"                             | true
-        "/"                                 | true
-        System.properties["user.home"]      | true
-        System.properties["java.io.tmpdir"] | true
-        "invalid directory path"            | false
-        "(!/§"                              | false
-        null                                | false
+        path << ["/tmp", "/", System.properties["user.home"], System.properties["java.io.tmpdir"] ]
+    }
 
-    }   */
+    def "does not accept invalid root paths"() {
+        when:
+        def dir = new TmpDir(root: path)
+        then:
+        thrown(IllegalArgumentException)
+        where:
+        path << [null, "", "invalid folder name /(%&", "/notExistingFolder"]
+    }
 
     def "can create directories at all"() {
         when:
@@ -68,13 +67,14 @@ class CreatingTmpDirs extends Specification {
         "folder1(folder1_1);folder2(folder2_1)" | ["/tmp/folder1/folder1_1","/tmp/folder2/folder2_1"]
         "folder1(folder1_1(folder1_1_1))"       | ["/tmp/folder1/folder1_1/folder1_1_1"]
     }
-     /*
+
     def "fail on duplicated directory name"() {
         when:
         tmpFolder.create fileTree
         then:
-        DuplDirEx ex = thrown()
-        ex.dirname == duplicate
+        ParserEx ex = thrown()
+        ex.duplicate == duplicate
+        ex.type == ParserEx.DIR_TYPE
         paths.every { !Files.isDirectory(Paths.get(it)) }
         where:
         fileTree                            | paths                                     | duplicate
@@ -82,5 +82,5 @@ class CreatingTmpDirs extends Specification {
         "folder1;folder2;folder2"           | ["/tmp/folder1","/tmp/folder2"]           | "folder2"
         "folder1(folder1_2;folder1_2)"      | ["/tmp/folder1","/tmp/folder1/folder1_2"] | "folder1_2"
         "folder1;folder1;folder2;folder2"   | ["/tmp/folder1","/tmp/folder2"]           | "folder1"
-    }              */
+    }
 }

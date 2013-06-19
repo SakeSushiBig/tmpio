@@ -1,5 +1,6 @@
 package org.tmpio
 
+import org.tmpio.cleanup.CleanupStrategy
 import org.tmpio.fslang.FsScanner
 import org.tmpio.fslang.Parser
 
@@ -7,7 +8,7 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 
-import static org.tmpio.CleanupStrategy.*
+import static org.tmpio.cleanup.CleanupStrategy.*
 
 class TmpDir {
 
@@ -21,8 +22,8 @@ class TmpDir {
     private TimerTask timerTask = null
 
     void setRoot(String value) {
-        if(value == null || !Files.isDirectory(root = Paths.get(value)))
-            throw new IllegalArgumentException(sprintf("cannot set %s as root path", value))
+        if(value == null || value == "" || !Files.isDirectory(root = Paths.get(value)))
+            throw new IllegalArgumentException("cannot set " + value + " as root path")
     }
 
     String getRoot() {
@@ -64,7 +65,11 @@ class TmpDir {
         def persistedTree = [:]
         if(subTree.containsKey("files")) {
             persistedTree["files"] = []
-            subTree["files"].each { Files.createFile(persistedTree["files"] << Paths.get(rootPath + it)) }
+            subTree["files"].each {
+                def path = Paths.get(rootPath + it)
+                Files.createFile(path)
+                persistedTree["files"] << path
+            }
         }
         subTree.remove("files")
         subTree.keySet().each {
@@ -79,8 +84,10 @@ class TmpDir {
         fileTree.keySet().each {
             if(it.toString() == "files")
                 fileTree[it].each { Files.deleteIfExists(it) }
-            cleanup(fileTree[it])
-            Files.deleteIfExists(it)
+            else {
+                cleanup(fileTree[it])
+                Files.deleteIfExists(it)
+            }
         }
     }
 
