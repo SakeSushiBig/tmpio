@@ -10,6 +10,13 @@ import java.nio.file.Paths
 @RunWith(Sputnik)
 class CreatingTmpFiles extends Specification {
 
+    static testDir = Paths.get("/tmp/tmpio")
+
+    def setupSpec() {
+        if(!Files.exists(testDir))
+            Files.createDirectory(testDir)
+    }
+
     def TmpDir tmpdir
 
     def setup() {

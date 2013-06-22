@@ -4,7 +4,6 @@ import org.tmpio.fslang.FsScanner
 import org.tmpio.fslang.Parser
 
 import java.nio.file.Path
-import java.nio.file.attribute.BasicFileAttributeView
 
 import static java.nio.file.Files.*
 import static java.nio.file.Paths.*
@@ -33,12 +32,12 @@ class TmpDir {
         persistStructure subTree
     }
 
-    def parseCode(String code) {
+    private parseCode(String code) {
         scanner.setSource(code)
         parser.parse(scanner)
     }
 
-    def persistStructure(Map subTree, Path root = rootPath) {
+    private persistStructure(Map subTree, Path root = rootPath) {
         if(subTree.containsKey("files")) {
             subTree["files"].each { createFile(root.resolve(it)) }
             subTree.remove("files")

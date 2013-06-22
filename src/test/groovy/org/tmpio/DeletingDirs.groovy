@@ -10,6 +10,13 @@ import java.nio.file.Paths
 @RunWith(Sputnik)
 class DeletingDirs extends Specification {
 
+    static testDir = Paths.get("/tmp/tmpio")
+
+    def setupSpec() {
+        if(!Files.exists(testDir))
+            Files.createDirectory(testDir)
+    }
+
     def tmpDir
 
     def setup() {
@@ -27,9 +34,4 @@ class DeletingDirs extends Specification {
         fileTree << ["folder1", "folder1;folder2"]
         paths << [["/tmp/tmpio/folder1"], ["/tmp/tmpio/folder1", "/tmp/tmpio/folder2"]]
     }
-
-    def "delete by timer"() {
-
-    }
-
 }
