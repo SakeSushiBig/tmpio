@@ -13,7 +13,7 @@ class DeletingDirs extends Specification {
     def tmpDir
 
     def setup() {
-        tmpDir = new TmpDir(root: '/tmp/tmpioTests/')
+        tmpDir = new TmpDir(root: '/tmp/tmpio/')
     }
 
     def "delete directory"() {
@@ -25,7 +25,11 @@ class DeletingDirs extends Specification {
         paths.every { !Files.exists(Paths.get(it)) }
         where:
         fileTree << ["folder1", "folder1;folder2"]
-        paths << [["/tmp/folder1"], ["/tmp/folder1", "/tmp/folder2"]]
+        paths << [["/tmp/tmpio/folder1"], ["/tmp/tmpio/folder1", "/tmp/tmpio/folder2"]]
+    }
+
+    def "delete by timer"() {
+
     }
 
 }

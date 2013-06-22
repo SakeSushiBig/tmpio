@@ -13,7 +13,7 @@ class CreatingTmpDirs extends Specification {
     def tmpFolder
 
     def setup() {
-        tmpFolder = new TmpDir(root: "/tmp/")
+        tmpFolder = new TmpDir(root: "/tmp/tmpio/")
     }
 
     def cleanup() {
@@ -42,7 +42,7 @@ class CreatingTmpDirs extends Specification {
         when:
         tmpFolder.create "folder1"
         then:
-        Files.isDirectory(Paths.get("/tmp/folder1/"))
+        Files.isDirectory(Paths.get("/tmp/tmpio/folder1/"))
     }
 
     def "create temporary directories with string notation"() {
@@ -52,7 +52,7 @@ class CreatingTmpDirs extends Specification {
         paths.every { Files.isDirectory(Paths.get(it)) }
         where:
         fileTree << ["folder1", "folder1;folder2"]
-        paths << [["/tmp/folder1"], ["/tmp/folder1", "/tmp/folder2"]]
+        paths << [["/tmp/tmpio/folder1"], ["/tmp/tmpio/folder1", "/tmp/tmpio/folder2"]]
     }
 
     def "create subdirectories"() {
@@ -62,10 +62,10 @@ class CreatingTmpDirs extends Specification {
         paths.every { Files.isDirectory(Paths.get(it)) }
         where:
         fileTree                                | paths
-        "folder1(folder1_1)"                    | ["/tmp/folder1/folder1_1"]
-        "folder1(folder1_1;folder1_2)"          | ["/tmp/folder1/folder1_1","/tmp/folder1/folder1_2"]
-        "folder1(folder1_1);folder2(folder2_1)" | ["/tmp/folder1/folder1_1","/tmp/folder2/folder2_1"]
-        "folder1(folder1_1(folder1_1_1))"       | ["/tmp/folder1/folder1_1/folder1_1_1"]
+        "folder1(folder1_1)"                    | ["/tmp/tmpio/folder1/folder1_1"]
+        "folder1(folder1_1;folder1_2)"          | ["/tmp/tmpio/folder1/folder1_1","/tmp/tmpio/folder1/folder1_2"]
+        "folder1(folder1_1);folder2(folder2_1)" | ["/tmp/tmpio/folder1/folder1_1","/tmp/tmpio/folder2/folder2_1"]
+        "folder1(folder1_1(folder1_1_1))"       | ["/tmp/tmpio/folder1/folder1_1/folder1_1_1"]
     }
 
     def "fail on duplicated directory name"() {
@@ -78,9 +78,9 @@ class CreatingTmpDirs extends Specification {
         paths.every { !Files.isDirectory(Paths.get(it)) }
         where:
         fileTree                            | paths                                     | duplicate
-        "folder1;folder1"                   | ["/tmp/folder1/"]                         | "folder1"
-        "folder1;folder2;folder2"           | ["/tmp/folder1","/tmp/folder2"]           | "folder2"
-        "folder1(folder1_2;folder1_2)"      | ["/tmp/folder1","/tmp/folder1/folder1_2"] | "folder1_2"
-        "folder1;folder1;folder2;folder2"   | ["/tmp/folder1","/tmp/folder2"]           | "folder1"
+        "folder1;folder1"                   | ["/tmp/tmpio/folder1/"]                         | "folder1"
+        "folder1;folder2;folder2"           | ["/tmp/tmpio/folder1","/tmp/tmpio/folder2"]           | "folder2"
+        "folder1(folder1_2;folder1_2)"      | ["/tmp/tmpio/folder1","/tmp/tmpio/folder1/folder1_2"] | "folder1_2"
+        "folder1;folder1;folder2;folder2"   | ["/tmp/tmpio/folder1","/tmp/tmpio/folder2"]           | "folder1"
     }
 }
