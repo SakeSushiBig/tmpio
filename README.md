@@ -30,3 +30,14 @@ If I or someone else finds the time here are some possible improvements to tmpio
 * integrating popular persisting frameworks (like Gson) to provide a quick way of writing content to the files (e.g. `tmp["db.json"] << Db.instance()`)
 * implementing FsLang as embedded DSL for Groovy
 
+### first prototype of file content api
+I've started working on the file content API (issue #1) in the file-content-api branch. It already provides all the writing functionalities for strings and a first json persistence function.
+Here a little excerpt:
+```groovy
+def dir = new TmpDir()
+dir.create "[foo.txt,bar.txt,c.csv]"
+dir.find /.*\.txt/ << {
+    // generate and return content as String
+}
+```
+I'm going to Scotland for two weeks, so don't expect any new updates before end of july :)
