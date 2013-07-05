@@ -50,4 +50,23 @@ class TmpDir {
     def cleanup(Path root = rootPath) {
         removeRecursively root
     }
+
+    def propertyMissing(String name) {
+        return new TmpFile(rootPath.resolve(name))
+    }
+
+    def find(regex) {
+        def paths = newDirectoryStream rootPath findAll {
+            isRegularFile(it) && it.fileName.toString().matches(regex)
+        } toList()
+        return new IoResultSet(paths)
+    }
+
+    def createFiles(int count, Closure<List<String>> contentGenerator) {
+        count.times {
+            def file = contentGenerator(it)
+            def path = rootPath.resolve(file.first())
+            write(path, file[1].bytes)
+        }
+    }
 }
