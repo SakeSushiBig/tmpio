@@ -1,5 +1,6 @@
 package org.tmpio
 
+import groovy.json.JsonSlurper
 import org.junit.runner.RunWith
 import org.spockframework.runtime.Sputnik
 import spock.lang.Specification
@@ -78,6 +79,20 @@ class SupplyFileContent extends Specification {
         dir.find(/.*.log/).paths.collect {
             (new String(readAllBytes(it))).toInteger()
         }.sum() == 55 // 1 + 2 + ... + 10 == 55
+    }
+
+    def "persist object to json file"() {
+        setup:
+        dir.create "[raphael.json]"
+        def raphi = new Buddy(name: "Raphael", salary: 292, kittenNames: ["Puppy", "Agnes", "Irmi"])
+        JsonSlurper slurper = new JsonSlurper()
+        when:
+        dir["raphael.json"].persist(raphi)
+        def parsedRaphi = slurper.parseText(new String(readAllBytes(dir.rootPath.resolve("raphael.json"))))
+        then:
+        raphi.name == parsedRaphi.name
+        raphi.salary == parsedRaphi.salary
+        raphi.kittenNames == parsedRaphi.kittenNames
     }
 
     def checkFileContains(String path, String content) {
