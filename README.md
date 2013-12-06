@@ -40,4 +40,3 @@ dir.find /.*\.txt/ << {
     // generate and return content as String
 }
 ```
-I'm going to Scotland for two weeks, so don't expect any new updates before end of july :)
